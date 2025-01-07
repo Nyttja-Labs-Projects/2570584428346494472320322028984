@@ -1,0 +1,3 @@
+- Remove cost of tokens in response
+- Remove the response all below the "To see the changes, you can"
+- Keep the response of the push to git
