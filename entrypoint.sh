@@ -6,16 +6,13 @@ if [ -f .env ]; then
 fi
 
 # Function to handle shutdown
-shutdown() {
-    echo "Shutdown signal received. Executing cleanup..."
+cleanup() {
+    echo "shutdown signal received. Executing cleanup..."
     # Release the zrok tunnel
-    zrok release --unique-name "$(basename "$PWD")"
+    zrok release "$(basename "$PWD")"
     echo "Cleanup completed. Exiting."
     exit 0
 }
-
-# Trap SIGTERM and SIGINT signals
-trap shutdown SIGTERM SIGINT
 
 # Export UNIQUE_NAME for use in server.ts
 export UNIQUE_NAME="$(basename "$PWD")"
@@ -45,3 +42,17 @@ echo "Using UNIQUE_NAME: $UNIQUE_NAME"
 # Wait for both background processes
 wait $DENOPID
 wait $ZROKPID
+
+
+# Trap SIGTERM and SIGINT signals
+#trap shutdown SIGTERM SIGINT
+trap 'true' SIGTERM
+
+# Execute the main command
+"${@}" &
+
+# Wait for the command to finish
+wait $!
+
+# Cleanup
+cleanup
