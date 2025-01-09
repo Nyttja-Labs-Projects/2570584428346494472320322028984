@@ -140,36 +140,64 @@ app.use(router.allowedMethods());
 const port = Number(Deno.env.get("PORT")) || DEFAULT_PORT;
 console.log(`Server running on port ${port}`);
 
-// Function to handle graceful shutdown
+/**
+ * Function to handle graceful shutdown
+ * This function runs `zrok release` followed by `zrok disable`
+ */
 async function shutdown() {
     if (isShuttingDown) return;
     isShuttingDown = true;
     console.log("Initiating graceful shutdown...");
 
-    // Here you can add any cleanup logic, e.g., running the `zrok release` command
-    // Example:
+    const reponame = basename(Deno.cwd());
 
-    const zrokProcess = Deno.run({
-        cmd: ["zrok", "release", basename(Deno.cwd())],
+    // 1) Run zrok release
+    const zrokReleaseProcess = Deno.run({
+        cmd: ["zrok", "release", reponame],
         stdout: "piped",
         stderr: "piped",
     });
-    const [status, stdout, stderr] = await Promise.all([
-        zrokProcess.status(),
-        zrokProcess.output(),
-        zrokProcess.stderrOutput(),
+
+    const [releaseStatus, releaseStdout, releaseStderr] = await Promise.all([
+        zrokReleaseProcess.status(),
+        zrokReleaseProcess.output(),
+        zrokReleaseProcess.stderrOutput(),
     ]);
-    zrokProcess.close();
 
-    const output = new TextDecoder().decode(stdout);
-    const errorOutput = new TextDecoder().decode(stderr);
+    zrokReleaseProcess.close();
 
-    if (status.success) {
-        console.log("Zrok release successful:", output);
+    const releaseOutput = new TextDecoder().decode(releaseStdout);
+    const releaseErrorOutput = new TextDecoder().decode(releaseStderr);
+
+    if (releaseStatus.success) {
+        console.log("Zrok release successful:", releaseOutput);
     } else {
-        console.error("Zrok release failed:", errorOutput);
+        console.error("Zrok release failed:", releaseErrorOutput);
     }
 
+    // 2) Run zrok disable
+    const zrokDisableProcess = Deno.run({
+        cmd: ["zrok", "disable", reponame],
+        stdout: "piped",
+        stderr: "piped",
+    });
+
+    const [disableStatus, disableStdout, disableStderr] = await Promise.all([
+        zrokDisableProcess.status(),
+        zrokDisableProcess.output(),
+        zrokDisableProcess.stderrOutput(),
+    ]);
+
+    zrokDisableProcess.close();
+
+    const disableOutput = new TextDecoder().decode(disableStdout);
+    const disableErrorOutput = new TextDecoder().decode(disableStderr);
+
+    if (disableStatus.success) {
+        console.log("Zrok disable successful:", disableOutput);
+    } else {
+        console.error("Zrok disable failed:", disableErrorOutput);
+    }
 
     // Delay to allow ongoing requests to complete
     setTimeout(() => {

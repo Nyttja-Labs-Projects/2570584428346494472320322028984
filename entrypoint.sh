@@ -10,6 +10,7 @@ cleanup() {
     echo "shutdown signal received. Executing cleanup..."
     # Release the zrok tunnel
     zrok release "$(basename "$PWD")"
+    zrok disable
     echo "Cleanup completed. Exiting."
     exit 0
 }
