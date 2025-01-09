@@ -1,3 +1,5 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
     "name": "Node.js & TypeScript",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
@@ -8,14 +10,11 @@
     // Features to add to the dev container. More info: https://containers.dev/features.
     // "features": {},
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
-    "forwardPorts": [
-        3000,
-        3001
-    ],
+    "forwardPorts": [3000, 3001],
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": "curl -LsSf https://aider.chat/install.sh | sh && curl -sSLfo ./zrok-install.bash https://get.openziti.io/install.bash && sudo bash ./zrok-install.bash zrok",
     // Use 'postStartCommand' to run commands after the container starts.
-    "postStartCommand": "deno run --allow-all --watch server.ts && zrok enable --headless 03Hbv2I1twjp && zrok reserve public localhost:3001 --unique-name \"$(basename $(pwd))\" --backend-mode proxy"
+    "postStartCommand": "./entrypoint.sh",
     // Configure tool-specific properties.
     // "customizations": {},
     // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.

@@ -1,7 +1,6 @@
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 
-// deno run --allow-all --watch server.ts
-// ( --allow-run for spawning 'aider' and 'git', --allow-read/--allow-write if needed )
+// Constants
 const DEFAULT_PORT = 3001;
 const router = new Router();
 
@@ -11,15 +10,13 @@ const router = new Router();
  */
 router.post("/prompt", async (context) => {
     try {
-        const body = await context.request.body.json();
+        const body = await context.request.body().value;
         const prompt = body.q;
 
-        const v = Deno.env.get("DEEPSEEK_API_KEY");
-        console.log("VAR: ");
-        console.log(v);
-
-        console.log(body);
-        console.log(prompt);
+        const DEEPSEEK_API_KEY = Deno.env.get("DEEPSEEK_API_KEY");
+        console.log("DEEPSEEK_API_KEY:", DEEPSEEK_API_KEY);
+        console.log("Request Body:", body);
+        console.log("Prompt:", prompt);
 
         if (!prompt) {
             context.response.status = 400;
@@ -132,4 +129,16 @@ app.use(router.allowedMethods());
 // Start listening
 const port = Number(Deno.env.get("PORT")) || DEFAULT_PORT;
 console.log(`Server running on port ${port}`);
+
+// Handle graceful shutdown
+const signals = ["SIGINT", "SIGTERM"] as const;
+
+for (const signal of signals) {
+    Deno.addSignalListener(signal, () => {
+        console.log(`Received ${signal}. Shutting down gracefully...`);
+        // Place any additional cleanup logic here if needed
+        Deno.exit();
+    });
+}
+
 await app.listen({ port });
