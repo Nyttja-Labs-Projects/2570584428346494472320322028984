@@ -22,7 +22,7 @@ export UNIQUE_NAME="$(basename "$PWD")"
 
 # Enable zrok
 echo "Enabling zrok..."
-zrok enable --token "$ZROK_TOKEN"
+zrok enable "$ZROK_TOKEN"
 ENABLE_STATUS=$?
 
 if [ $ENABLE_STATUS -ne 0 ]; then
