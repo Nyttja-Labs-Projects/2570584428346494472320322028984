@@ -14,7 +14,7 @@
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": "curl -LsSf https://aider.chat/install.sh | sh && curl -sSLfo ./zrok-install.bash https://get.openziti.io/install.bash && sudo bash ./zrok-install.bash zrok",
     // Use 'postStartCommand' to run commands after the container starts.
-    "postStartCommand": "chmod +x entrypoint.sh && ./entrypoint.sh"
+    "postStartCommand": "chmod +x entrypoint.sh && ./entrypoint.sh &"
     // Configure tool-specific properties.
     // "customizations": {},
     // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
