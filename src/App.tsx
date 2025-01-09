@@ -1,6 +1,21 @@
-import './App.css'
+import './App.css';
+import { useEffect } from 'react';
 
 function App() {
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    });
+
+    const hiddenElements = document.querySelectorAll('.hidden');
+    hiddenElements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -58,9 +73,27 @@ function App() {
           </div>
         </section>
 
-        <section id="about" className="about-section">
+        <section id="about" className="about-section hidden">
           <h2>About Us</h2>
           <p>We're dedicated to creating simple, effective solutions that make life easier. Our team of experts works tirelessly to deliver the best experience possible.</p>
+        </section>
+
+        <section id="testimonials" className="testimonials-section hidden">
+          <h2>What Our Users Say</h2>
+          <div className="testimonials-grid">
+            <div className="testimonial-card">
+              <p>"SimpleLand has completely transformed how we work. The simplicity is unmatched!"</p>
+              <div className="testimonial-author">- Sarah L.</div>
+            </div>
+            <div className="testimonial-card">
+              <p>"I've never seen such a perfect balance of simplicity and power. Highly recommended!"</p>
+              <div className="testimonial-author">- Michael T.</div>
+            </div>
+            <div className="testimonial-card">
+              <p>"The team behind SimpleLand is incredible. They really understand user needs."</p>
+              <div className="testimonial-author">- Emily R.</div>
+            </div>
+          </div>
         </section>
       </main>
 
