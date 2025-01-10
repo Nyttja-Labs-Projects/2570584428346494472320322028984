@@ -11,6 +11,6 @@
     "forwardPorts": [3001],
     "postCreateCommand": "curl -LsSf https://aider.chat/install.sh | sh && curl -sSLfo ./zrok-install.bash https://get.openziti.io/install.bash && sudo bash ./zrok-install.bash zrok",
     // Remove or adjust postStartCommand if necessary since entrypoint handles process startup
-    // "postStartCommand": "chmod +x /usr/local/bin/entrypoint.sh && /usr/local/bin/entrypoint.sh"
+    "postStartCommand": "chmod +x /usr/local/bin/entrypoint.sh && /usr/local/bin/entrypoint.sh"
     // Other configurations...
 }
