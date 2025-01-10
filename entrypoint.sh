@@ -1,12 +1,12 @@
 #!/bin/bash
-set -e
+# set -e
 
 # Function to handle shutdown
 cleanup() {
     echo "Shutdown signal received. Executing cleanup..."
     # Release the zrok tunnel
-    zrok release "$(basename "$PWD")"
-    zrok disable
+    #zrok release "$(basename "$PWD")"
+    zrok disable # disable release also the name?
     echo "Cleanup completed. Exiting."
     exit 0
 }
@@ -36,12 +36,12 @@ echo "zrok enabled successfully."
 # Start the Deno server in the background
 deno run --allow-all --watch server.ts &
 DENOPID=$!
-echo "Deno server started with PID $DENOPID"
+echo "Deno server started"
 
 # Reserve the zrok tunnel in the background
 zrok reserve public localhost:3001 --unique-name "$(basename "$PWD")" --backend-mode proxy &
 ZROKPID=$!
-echo "Zrok reserved with PID: $ZROKPID"
+echo "Zrok reserved"
 echo "Using UNIQUE_NAME: $UNIQUE_NAME"
 
 # Wait for both background processes
