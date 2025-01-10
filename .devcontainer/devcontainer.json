@@ -8,7 +8,7 @@
         "ghcr.io/devcontainers-contrib/features/deno:1.0.2": {}
     },
     "forwardPorts": [3001],
-    "postCreateCommand": "curl -LsSf https://aider.chat/install.sh | sh && curl -sSLfo ./zrok-install.bash https://get.openziti.io/install.bash && sudo bash ./zrok-install.bash zrok",
+    "postCreateCommand": "curl -LsSf https://aider.chat/install.sh | sh && curl -sSLfo ./zrok-install.bash https://get.openziti.io/install.bash && sudo bash ./zrok-install.bash zrok"
     // Remove or adjust postStartCommand if necessary since entrypoint handles process startup
     // "postStartCommand": "chmod +x entrypoint.sh && ./entrypoint.sh"
     // Other configurations...
