@@ -1,19 +1,23 @@
 #!/bin/bash
-
-# Load environment variables from .env if it exists
-if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
-fi
+set -e
 
 # Function to handle shutdown
 cleanup() {
-    echo "shutdown signal received. Executing cleanup..."
+    echo "Shutdown signal received. Executing cleanup..."
     # Release the zrok tunnel
     zrok release "$(basename "$PWD")"
     zrok disable
     echo "Cleanup completed. Exiting."
     exit 0
 }
+
+# Trap SIGTERM and SIGINT signals
+trap cleanup SIGTERM SIGINT
+
+# Load environment variables from .env if it exists
+if [ -f .env ]; then
+    export $(grep -v '^#' .env | xargs)
+fi
 
 # Export UNIQUE_NAME for use in server.ts
 export UNIQUE_NAME="$(basename "$PWD")"
@@ -41,19 +45,13 @@ echo "Zrok reserved with PID: $ZROKPID"
 echo "Using UNIQUE_NAME: $UNIQUE_NAME"
 
 # Wait for both background processes
-wait $DENOPID
-wait $ZROKPID
+wait $DENOPID &
+DENOWAITPID=$!
+wait $ZROKPID &
+ZROKWAITPID=$!
 
+# Wait for any process to exit
+wait -n
 
-# Trap SIGTERM and SIGINT signals
-#trap shutdown SIGTERM SIGINT
-trap 'true' SIGTERM
-
-# Execute the main command
-"${@}" &
-
-# Wait for the command to finish
-wait $!
-
-# Cleanup
+# If any process exits, perform cleanup
 cleanup
