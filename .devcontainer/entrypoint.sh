@@ -47,11 +47,11 @@ deno run --allow-all server.ts &
 echo "[+]: Deno server started."
 
 # ====================================
-zrok disable
-zrok enable "$ZROK_TOKEN"
-zrok release "$REPO_NAME" 
+#zrok disable
+zrok enable "$ZROK_TOKEN" --headless --description "$REPO_NAME"
+#zrok release "$REPO_NAME" 
 echo "[+]: Zrok enabled successfully"
-zrok reserve public localhost:3001 --unique-name "buyyou" --backend-mode proxy 
+zrok reserve public localhost:3001 --unique-name "$REPO_NAME" backend-mode proxy
 echo "[+]: Zrok tunnel: '$REPO_NAME' reserved with PID: $ZROKPID."
 
 
