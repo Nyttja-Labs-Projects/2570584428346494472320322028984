@@ -44,14 +44,14 @@ trap cleanup SIGTERM SIGINT SIGKILL
 
 kill -9 $(lsof -ti:3001)
 deno run --allow-all server.ts &
-echo "[+]: Deno server started with PID $DENOPID."
+echo "[+]: Deno server started."
 
 # ====================================
 zrok disable
 zrok enable "$ZROK_TOKEN"
 zrok release "$REPO_NAME" 
 echo "[+]: Zrok enabled successfully"
-zrok reserve public localhost:3001 --unique-name "kreowirjioe" --backend-mode proxy 
+zrok reserve public localhost:3001 --unique-name "buyyou" --backend-mode proxy 
 echo "[+]: Zrok tunnel: '$REPO_NAME' reserved with PID: $ZROKPID."
 
 

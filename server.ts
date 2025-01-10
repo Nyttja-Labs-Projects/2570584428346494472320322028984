@@ -11,6 +11,8 @@ const router = new Router();
  */
 router.post("/prompt", async (context) => {
 
+    console.log("OKOKO");
+
     try {
         const body = await context.request.body({ type: "json" }).value;
         const prompt = body.q;
