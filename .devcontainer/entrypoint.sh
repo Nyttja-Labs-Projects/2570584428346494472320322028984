@@ -1,54 +1,62 @@
 #!/bin/bash
-# set -e
 
-export NAME=$(head /dev/urandom | tr -dc '0-9' | head -c24)
-echo "Generated NAME: $NAME"
+export REPO_NAME=$(basename "$PWD")
 
-# Function to handle shutdown
 cleanup() {
     echo "Shutdown signal received. Executing cleanup..."
-    #zrok release "$(basename "$PWD")"
-    zrok release "$NAME"
-    zrok disable # disable release also the name?
-    echo "Cleanup completed. Exiting."
+    
+    # Terminate Deno server if running
+    # if kill -0 "$DENOPID" 2>/dev/null; then
+    #     echo "Terminating Deno server (PID $DENOPID)..."
+    #     kill "$DENOPID"
+    #     wait "$DENOPID" || true
+    # fi
+
+    # # Terminate zrok reserve if running
+    # if kill -0 "$ZROKPID" 2>/dev/null; then
+    #     echo "Terminating zrok reserve (PID $ZROKPID)..."
+    #     kill "$ZROKPID"
+    #     wait "$ZROKPID" || true
+    # fi
+
+    # # Release the zrok tunnel
+    # echo "Releasing zrok tunnel..."
+    # if zrok release "$REPO_NAME"; then
+    #     echo "Zrok tunnel released successfully."
+    # else
+    #     echo "Failed to release zrok tunnel."
+    # fi
+
+    # # Disable zrok
+    # echo "Disabling zrok..."
+    # if zrok disable "$REPO_NAME"; then
+    #     echo "Zrok disabled successfully."
+    # else
+    #     echo "Failed to disable zrok."
+    # fi
+
+    # echo "Cleanup completed. Exiting."
+    # exit 0
 }
 
 # Trap SIGTERM and SIGINT signals
 trap cleanup SIGTERM SIGINT SIGKILL
 
-# Load environment variables from .env if it exists
-#if [ -f .env ]; then
-#    export $(grep -v '^#' .env | xargs)
-#fi
+kill -9 $(lsof -ti:3001)
+deno run --allow-all server.ts &
+echo "[+]: Deno server started with PID $DENOPID."
 
-# Start the Deno server in the background
-deno install --allow-scripts=npm:workerd@1.20241230.0,npm:esbuild@0.17.19
-deno run --allow-all --watch server.ts &
-DENOPID=$!
-echo "Deno server started"
-
-# Export UNIQUE_NAME for use in server.ts
-export UNIQUE_NAME="$(basename "$PWD")"
-
-# Enable zrok
+# ====================================
+zrok disable
 zrok enable "$ZROK_TOKEN"
-echo "zrok enabled successfully."
+zrok release "$REPO_NAME" 
+echo "[+]: Zrok enabled successfully"
+zrok reserve public localhost:3001 --unique-name "kreowirjioe" --backend-mode proxy 
+echo "[+]: Zrok tunnel: '$REPO_NAME' reserved with PID: $ZROKPID."
 
-# Reserve the zrok tunnel in the background
-#zrok reserve public localhost:3001 --unique-name "$(basename "$PWD")" --backend-mode proxy &
-zrok reserve public localhost:3001 --unique-name "$NAME" --backend-mode proxy
-ZROKPID=$!
-echo "Zrok reserved"
-echo "Using UNIQUE_NAME: $UNIQUE_NAME"
 
-# Wait for both background processes
-#wait $DENOPID &
-#DENOWAITPID=$!
-#wait $ZROKPID &
-#ZROKWAITPID=$!
-
-# Wait for any process to exit
+# Wait for any background process to exit
 wait -n
 
 # If any process exits, perform cleanup
-cleanup
+# cleanup
