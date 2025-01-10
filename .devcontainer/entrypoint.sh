@@ -38,8 +38,8 @@ echo "Using UNIQUE_NAME: $UNIQUE_NAME"
 # Wait for both background processes
 wait $DENOPID &
 DENOWAITPID=$!
-wait $ZROKPID &
-ZROKWAITPID=$!
+#wait $ZROKPID &
+#ZROKWAITPID=$!
 
 # Wait for any process to exit
 wait -n
