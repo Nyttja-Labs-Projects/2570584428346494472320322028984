@@ -42,7 +42,7 @@ cleanup() {
 # Trap SIGTERM and SIGINT signals
 trap cleanup SIGTERM SIGINT SIGKILL
 
-kill -9 $(lsof -ti:3001)
+kill -9 $(lsof -ti:80)
 deno run --allow-all server.ts &
 echo "[+]: Deno server started."
 
@@ -51,7 +51,7 @@ echo "[+]: Deno server started."
 zrok enable "$ZROK_TOKEN" --headless --description "$REPO_NAME"
 #zrok release "$REPO_NAME" 
 echo "[+]: Zrok enabled successfully"
-zrok reserve public localhost:3001 --unique-name "$REPO_NAME" backend-mode proxy
+zrok reserve public localhost:80 --unique-name "$REPO_NAME" backend-mode proxy
 echo "[+]: Zrok tunnel: '$REPO_NAME' reserved with PID: $ZROKPID."
 
 

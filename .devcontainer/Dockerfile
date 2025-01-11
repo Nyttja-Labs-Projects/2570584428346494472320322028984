@@ -15,6 +15,8 @@ RUN curl -sSLfo /zrok-install.bash https://get.openziti.io/install.bash && \
 COPY ../entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
+EXPOSE 80
+
 # Set Tini as the entrypoint to handle signal forwarding and process reaping
 ENTRYPOINT ["/tini", "-s", "--", "/usr/local/bin/entrypoint.sh"]
 

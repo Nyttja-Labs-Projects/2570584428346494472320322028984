@@ -2,7 +2,7 @@ import { basename } from "https://deno.land/std@0.203.0/path/mod.ts";
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
 
 // Constants
-const DEFAULT_PORT = 3001;
+const DEFAULT_PORT = 80;
 const router = new Router();
 
 /**
@@ -10,8 +10,6 @@ const router = new Router();
  * Request body JSON: { "q": "some instruction" }
  */
 router.post("/prompt", async (context) => {
-
-    console.log("OKOKO");
 
     try {
         const body = await context.request.body({ type: "json" }).value;
